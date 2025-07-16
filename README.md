@@ -10,18 +10,18 @@ Realizado o git clone para minha maquina virtual com linux Ubuntu 22.04.5 LTS
 ## Arquivos criados na raiz do projeto
 
 - `docker-compose.yml`
-- `Dockerfile.backend`
-- `Dockerfile.frontend`
-- `nginx.conf`
+- `Dockerfile`
+- `frontend/Dockerfile.frontend`
+- `frontend/nginx.conf`
 
 ---
 
 ## Como o projeto está montado
 
-- **Backend Flask**: Dois containers (`backend1` e `backend2`) executam a aplicação Flask. Isso simula o balanceamento de carga, como em ambientes reais.
 - **Frontend React**: A aplicação React é compilada com `npm run build`, e os arquivos são servidos pelo NGINX.
 - **Banco PostgreSQL**: Armazena os palpites do jogador. Os dados são persistentes graças a um volume nomeado (`pgdata`).
-- **NGINX**: Faz o proxy reverso das requisições para os backends e serve a interface web do React. Também realiza o balanceamento entre os dois containers backend.
+- **NGINX**: O arquivo nginx.conf foi utilizado para integrar as aplicações frontend e backend, atuando como um proxy reverso. Ele é responsável por encaminhar as requisições feitas para a rota /api diretamente ao backend desenvolvido em Flask, além de possibilitar o balanceamento de carga entre múltiplas instâncias do backend, garantindo uma distribuição eficiente das chamadas.
+- **REDE**: Para conectar os containers do projeto, foi criada uma rede personalizada do tipo bridge, chamada game-guess-network. Esse tipo de rede é o padrão no Docker e garante um bom nível de isolamento entre os containers e o host, além de permitir uma comunicação eficiente e segura entre os serviços, utilizando o DNS interno fornecido pelo Docker.
 
 ---
 
@@ -61,14 +61,13 @@ docker-compose up --build
 
 Após o comando acima, acesse no navegador:
 
-- Interface do jogo: [http://localhost](http://localhost)
-- API do backend: [http://localhost/api/guesses](http://localhost/api/guesses)
+- Interface do jogo: http://localhost:8080
+- API do backend: http://localhost:8080/api
 
 ---
 
 ## Como atualizar os serviços
 
-- **Backend**: Modifique os arquivos Python e execute `docker-compose up --build`.
 - **Frontend**: Atualize o React, rode `npm run build` dentro da pasta `frontend/` e depois `docker-compose up --build`.
 - **Banco de Dados**: Troque a versão da imagem no `docker-compose.yml`, por exemplo, de `postgres:15` para `postgres:16`.
 
@@ -94,9 +93,8 @@ Sim! Após subir os containers com sucesso, a aplicação está acessível via n
 
 Durante a construção deste projeto, utilizei o ChatGPT para esclarecer algumas dúvidas e corrigir erros, como:
 
-- Problemas com a pasta errada no build do frontend (`dist`--> `build`).
+- Problemas arquivo run.py.
 - Dificuldades com permissões de instalação do Node/NVM no Ubuntu.
 - Ajustes na configuração do NGINX para fazer corretamente o proxy e servir os arquivos do React.
-- Tive ajuda do colegas onde tivemos troca de conhecimentos (erros compartilhados, duvidas dobre a estrutura do docker-compose).
-
+- Tive ajuda do colegas onde tivemos troca de conhecimentos (erros compartilhados, duvidas dobre a estrutura do docker-compose),nginx e dockerfile do frontend
 Esses pontos me ajudaram a superar limitações que tive ao aplicar os conceitos aprendidos em laboratório.
